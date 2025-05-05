@@ -1,0 +1,127 @@
+{
+    "info": {
+        "name": "FormFate Server POC API",
+        "description": "Postman collection for Express + MongoDB Schema POC API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "version": {
+            "major": 1,
+            "minor": 1,
+            "patch": 0
+        }
+    },
+    "item": [
+        {
+            "name": "List Schemas",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{serverbaseurl}}/schemas",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "schemas"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Get Schema by ID",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{serverbaseurl}}/schemas/:id",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "schemas",
+                        ":id"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Create New Schema",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"title\": \"Sample Schema\",\n  \"description\": \"Example form schema\",\n  \"data\": {\n    \"properties\": {\n      \"firstName\": {\n        \"type\": \"text\",\n        \"title\": \"First Name\",\n        \"placeholder\": \"Enter your first name\"\n      }\n    },\n    \"buttons\": [\n      {\n        \"type\": \"submit\",\n        \"label\": \"Submit\"\n      }\n    ]\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{serverbaseurl}}/schemas",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "schemas"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Update Schema by ID",
+            "request": {
+                "method": "PUT",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"title\": \"Updated Schema Title\",\n  \"description\": \"Updated description\",\n  \"data\": {\n    \"properties\": {\n      \"lastName\": {\n        \"type\": \"text\",\n        \"title\": \"Last Name\",\n        \"placeholder\": \"Enter your last name\"\n      }\n    },\n    \"buttons\": [\n      {\n        \"type\": \"submit\",\n        \"label\": \"Update\"\n      }\n    ]\n  }\n}"
+                },
+                "url": {
+                    "raw": "{{serverbaseurl}}/schemas/:id",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "schemas",
+                        ":id"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Delete Schema by ID",
+            "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                    "raw": "{{serverbaseurl}}/schemas/:id",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "schemas",
+                        ":id"
+                    ]
+                }
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "serverbaseurl",
+            "value": "http://localhost:4000",
+            "description": "Base URL for the Express server"
+        },
+        {
+            "key": "id",
+            "value": "<replace-with-schema-id>",
+            "description": "MongoDB ObjectId of the schema (used as path parameter)"
+        }
+    ]
+}
