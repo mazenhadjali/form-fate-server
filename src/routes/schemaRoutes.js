@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const SchemaModel = require('../models/schemaModel');
+const isAuth = require('../middlewares/isAuth');
 
 // GET /schemas → retrieve all (only title, description, _id)
-router.get('/', async (req, res) => {
+router.get('/', isAuth, async (req, res) => {
     try {
-        const schemas = await SchemaModel.find()
+        const schemas = await SchemaModel.find({ user: req.user.id })
             .select('title description') // this automatically includes _id
             .sort({ createdAt: -1 });
 
@@ -18,7 +19,7 @@ router.get('/', async (req, res) => {
 
 
 // GET /schemas/:id → retrieve one by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', isAuth, async (req, res) => {
     const { id } = req.params;
     try {
         const schema = await SchemaModel.findById(id);
@@ -33,7 +34,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST /schemas → save one
-router.post('/', async (req, res) => {
+router.post('/', isAuth, async (req, res) => {
     const { data, title, description } = req.body;
 
     if (!data || !title) {
@@ -42,6 +43,7 @@ router.post('/', async (req, res) => {
 
     try {
         const newSchema = new SchemaModel({
+            user: req.user.id,
             title,
             description,
             data
@@ -55,13 +57,17 @@ router.post('/', async (req, res) => {
 });
 
 // DELETE /schemas/:id → delete one by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuth, async (req, res) => {
     const { id } = req.params;
     try {
-        const deleted = await SchemaModel.findByIdAndDelete(id);
-        if (!deleted) {
+        const schema = await SchemaModel.findById(id);
+        if (!schema) {
             return res.status(404).json({ error: 'Schema not found' });
         }
+        if (schema.user.toString() !== req.user.id) {
+            return res.status(403).json({ error: 'Not authorized to delete this schema' });
+        }
+        await SchemaModel.findByIdAndDelete(id);
         res.json({ message: 'Schema deleted successfully' });
     } catch (err) {
         console.error(`Error deleting schema with id ${id}:`, err);

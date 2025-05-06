@@ -1,20 +1,77 @@
 {
     "info": {
         "name": "FormFate Server POC API",
-        "description": "Postman collection for Express + MongoDB Schema POC API",
+        "description": "Postman collection for Express + MongoDB Schema POC API with user auth",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
         "version": {
             "major": 1,
-            "minor": 1,
+            "minor": 2,
             "patch": 0
         }
     },
     "item": [
         {
+            "name": "User Signup",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "{{serverbaseurl}}/users/signup",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "users",
+                        "signup"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "User Login",
+            "request": {
+                "method": "POST",
+                "header": [
+                    {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                    "raw": "{{serverbaseurl}}/users/login",
+                    "host": [
+                        "{{serverbaseurl}}"
+                    ],
+                    "path": [
+                        "users",
+                        "login"
+                    ]
+                }
+            }
+        },
+        {
             "name": "List Schemas",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
                     "raw": "{{serverbaseurl}}/schemas",
                     "host": [
@@ -30,7 +87,12 @@
             "name": "Get Schema by ID",
             "request": {
                 "method": "GET",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
                     "raw": "{{serverbaseurl}}/schemas/:id",
                     "host": [
@@ -51,6 +113,10 @@
                     {
                         "key": "Content-Type",
                         "value": "application/json"
+                    },
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
                     }
                 ],
                 "body": {
@@ -69,36 +135,15 @@
             }
         },
         {
-            "name": "Update Schema by ID",
-            "request": {
-                "method": "PUT",
-                "header": [
-                    {
-                        "key": "Content-Type",
-                        "value": "application/json"
-                    }
-                ],
-                "body": {
-                    "mode": "raw",
-                    "raw": "{\n  \"title\": \"Updated Schema Title\",\n  \"description\": \"Updated description\",\n  \"data\": {\n    \"properties\": {\n      \"lastName\": {\n        \"type\": \"text\",\n        \"title\": \"Last Name\",\n        \"placeholder\": \"Enter your last name\"\n      }\n    },\n    \"buttons\": [\n      {\n        \"type\": \"submit\",\n        \"label\": \"Update\"\n      }\n    ]\n  }\n}"
-                },
-                "url": {
-                    "raw": "{{serverbaseurl}}/schemas/:id",
-                    "host": [
-                        "{{serverbaseurl}}"
-                    ],
-                    "path": [
-                        "schemas",
-                        ":id"
-                    ]
-                }
-            }
-        },
-        {
             "name": "Delete Schema by ID",
             "request": {
                 "method": "DELETE",
-                "header": [],
+                "header": [
+                    {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}"
+                    }
+                ],
                 "url": {
                     "raw": "{{serverbaseurl}}/schemas/:id",
                     "host": [
@@ -121,7 +166,12 @@
         {
             "key": "id",
             "value": "<replace-with-schema-id>",
-            "description": "MongoDB ObjectId of the schema (used as path parameter)"
+            "description": "MongoDB ObjectId of the schema"
+        },
+        {
+            "key": "token",
+            "value": "<replace-with-jwt-token>",
+            "description": "JWT token returned from /login or /signup"
         }
     ]
 }
