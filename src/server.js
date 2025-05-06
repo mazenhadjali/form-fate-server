@@ -1,11 +1,21 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
+
 const schemaRoutes = require('./routes/schemaRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 app.use(express.json());
+
+// cors
+// enable all origins for development purposes
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {

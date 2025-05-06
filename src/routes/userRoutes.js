@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const isAuth = require('../middlewares/isAuth');
 // dotenv is not needed here as we are using it in server.js
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -20,7 +21,7 @@ router.post('/signup', async (req, res) => {
         const newUser = new User({ username, email, password });
         await newUser.save();
 
-        const token = jwt.sign({ id: newUser._id }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: newUser._id, username: newUser.username, email: newUser.email }, JWT_SECRET, { expiresIn: '7d' });
 
         res.status(201).json({ message: 'User registered successfully', token });
     } catch (err) {
@@ -45,13 +46,18 @@ router.post('/login', async (req, res) => {
         if (!isMatch)
             return res.status(400).json({ error: 'Invalid email or password' });
 
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user._id, username: user.username, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
 
         res.json({ message: 'Login successful', token });
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).json({ error: 'Login failed' });
     }
+});
+
+// GET /me → get current user profile
+router.get('/me', isAuth, async (req, res) => {
+    res.json({ user: req.user });
 });
 
 module.exports = router;
