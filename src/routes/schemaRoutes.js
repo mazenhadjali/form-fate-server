@@ -17,10 +17,11 @@ router.get('/', isAuth, async (req, res) => {
     }
 });
 
-
 // GET /schemas/:id → retrieve one by ID
 router.get('/:id', isAuth, async (req, res) => {
     const { id } = req.params;
+    // wait 5 seconds before returning the response
+    await new Promise(resolve => setTimeout(resolve, 1200));
     try {
         const schema = await SchemaModel.findById(id);
         if (!schema) {
@@ -55,6 +56,38 @@ router.post('/', isAuth, async (req, res) => {
         res.status(500).json({ error: 'Failed to save schema' });
     }
 });
+
+// PATCH /schemas/:id → partially update a schema
+router.put('/:id', isAuth, async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const schema = await SchemaModel.findById(id);
+        if (!schema) {
+            return res.status(404).json({ error: 'Schema not found' });
+        }
+        if (schema.user.toString() !== req.user.id) {
+            return res.status(403).json({ error: 'Not authorized to update this schema' });
+        }
+
+        // Define fields allowed to be updated
+        const allowedFields = ['title', 'description', 'data'];
+
+        // Dynamically update only allowed fields
+        Object.keys(req.body).forEach((key) => {
+            if (req.body[key] !== undefined && allowedFields.includes(key)) {
+                schema[key] = req.body[key];
+            }
+        });
+
+        const updatedSchema = await schema.save();
+        res.json(updatedSchema);
+    } catch (err) {
+        console.error(`Error updating schema with id ${id}:`, err);
+        res.status(500).json({ error: 'Failed to update schema' });
+    }
+});
+
 
 // DELETE /schemas/:id → delete one by ID
 router.delete('/:id', isAuth, async (req, res) => {
