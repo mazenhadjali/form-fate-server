@@ -17,8 +17,15 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+const MONGO_HOST = process.env.MONGO_HOST || 'localhost';
+const MONGO_PORT = process.env.MONGO_PORT || 27017;
+const MONGO_DB = process.env.MONGO_DB || 'formfatedb';
+const MONGO_USER = process.env.MONGO_USER
+const MONGO_PASSWORD = process.env.MONGO_PASSWORD
 
+
+const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+console.log('MongoDB URL:', mongoUrl);
 
 // Connect to MongoDB
 mongoose.connect(mongoUrl, {
