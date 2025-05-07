@@ -17,8 +17,11 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+const mongoUrl = `mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`;
+
+
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
@@ -28,5 +31,5 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/schemas', schemaRoutes);
 app.use('/users', userRoutes);
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.APP_PORT || 8081;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

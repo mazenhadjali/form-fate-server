@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+
+  mongo:
+    image: mongo:6
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=hadjalimazen
+      - MONGO_INITDB_ROOT_PASSWORD=hadjalimazen171198
+      - MONGO_INITDB_DATABASE=formfatedb
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+volumes:
+  mongo-data:
+
+
+networks:
+  app-network:
+    driver: bridge
