@@ -86,7 +86,7 @@ router.put('/:id', isAuth, async (req, res) => {
         }
 
         // Define fields allowed to be updated
-        const allowedFields = ['title', 'description', 'data'];
+        const allowedFields = ['title', 'description', 'data', 'key'];
 
         // Dynamically update only allowed fields
         Object.keys(req.body).forEach((key) => {
