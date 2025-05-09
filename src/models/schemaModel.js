@@ -6,6 +6,12 @@ const schemaModel = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    key: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
     title: {
         type: String,
         required: true,

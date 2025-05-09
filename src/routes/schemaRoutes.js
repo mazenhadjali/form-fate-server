@@ -18,10 +18,25 @@ router.get('/', isAuth, async (req, res) => {
 });
 
 // GET /schemas/:id → retrieve one by ID
-router.get('/:id', isAuth, async (req, res) => {
+router.get('/key/:key', async (req, res) => {
+    const { key } = req.params;
+    await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate a delay of 1.2 seconds
+    try {
+        const schema = await SchemaModel.findOne({ key: key });
+        if (!schema) {
+            return res.status(404).json({ error: 'Schema not found' });
+        }
+        res.json(schema);
+    } catch (err) {
+        console.error(`Error fetching schema with key ${key}:`, err);
+        res.status(500).json({ error: 'Failed to fetch schema' });
+    }
+});
+
+// GET /schemas/:id → retrieve one by ID
+router.get('/:id', async (req, res) => {
     const { id } = req.params;
-    // wait 5 seconds before returning the response
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 1200)); // Simulate a delay of 1.2 seconds
     try {
         const schema = await SchemaModel.findById(id);
         if (!schema) {
@@ -36,7 +51,7 @@ router.get('/:id', isAuth, async (req, res) => {
 
 // POST /schemas → save one
 router.post('/', isAuth, async (req, res) => {
-    const { data, title, description } = req.body;
+    const { data, title, description, key } = req.body;
 
     if (!data || !title) {
         return res.status(400).json({ error: 'Title and data are required' });
@@ -45,6 +60,7 @@ router.post('/', isAuth, async (req, res) => {
     try {
         const newSchema = new SchemaModel({
             user: req.user.id,
+            key,
             title,
             description,
             data
