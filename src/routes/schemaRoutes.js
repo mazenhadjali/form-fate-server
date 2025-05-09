@@ -7,8 +7,7 @@ const isAuth = require('../middlewares/isAuth');
 router.get('/', isAuth, async (req, res) => {
     try {
         const schemas = await SchemaModel.find({ user: req.user.id })
-            .select('title description') // this automatically includes _id
-            .sort({ createdAt: -1 });
+            .select('title description key _id');
 
         res.json(schemas);
     } catch (err) {
